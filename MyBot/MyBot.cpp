@@ -51,15 +51,12 @@ int main()
                 curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
                 curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
-                // Perform the request
                 CURLcode res = curl_easy_perform(curl);
 
-                // Check for errors
                 if (res != CURLE_OK) {
                     std::cerr << "cURL failed: " << curl_easy_strerror(res) << std::endl;
                 }
                 else {
-                    // Parse the JSON response
                     Json::Value root;
                     Json::Reader reader;
                     bool parsingSuccessful = reader.parse(response, root);
@@ -72,7 +69,6 @@ int main()
                         else {
                             std::string weather;
 
-                            // Add an emoji that's reactive to the weather
                             std:int type = root["weather"][0]["id"].asInt() / 100;
                             switch (type) {
                             case 2: // Thunderstorm
@@ -100,7 +96,6 @@ int main()
                             // Capitalize the first letter, since the API doesn't do it automatically
                             std::string desc = root["weather"][0]["description"].asString();
                             desc[0] = std::toupper(desc[0]);
-                            // Add the weather
                             weather += " Weather: " + desc;
 
                             // Add temperature
@@ -108,7 +103,6 @@ int main()
                             int temp = round(temperature);
                             weather += "\n🌡️ Temperature: " + std::to_string(temp) + "F";
 
-                            // Create the embed
                             dpp::embed embed = dpp::embed().
                                 set_color(0x11aaff).
                                 set_title("Weather for " + root["name"].asString()).
@@ -116,7 +110,6 @@ int main()
                                 set_footer(dpp::embed_footer().set_text("Requested by " + event.command.usr.global_name).set_icon(event.command.usr.get_avatar_url())).
                                 set_timestamp(time(0));
 
-                            // Reply to the message
                             event.reply(dpp::message(event.command.channel_id, embed).set_reference(event.command.message_id));
                         }
                     }
@@ -145,7 +138,6 @@ int main()
 		}
 	});
 
-    // Start the bot
 	bot.start(dpp::st_wait);
 
 	return 0;
